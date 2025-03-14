@@ -3,6 +3,13 @@
 
 #include "framework.h"
 
+
+/**
+ * @brief Represents a 2D line defined by two points and its implicit and parametric equations.
+ *
+ * This class provides functionalities for managing a line in a Descartes coordinate system.
+ * The line is uniquely defined by two points, and its implicit equation is represented as Ax + By = C.
+ */
 class Line {
 private:
     vec3 p1, p2;
@@ -13,7 +20,7 @@ public:
 
     bool contains(vec3 p) const;
 
-    vec3 computeIntersection(const Line &other) const;
+    vec3 computeIntersection(const Line& other) const;
 
     void translate(vec3 newPoint);
 
