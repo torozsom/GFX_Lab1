@@ -1,70 +1,107 @@
-#include "framework.h"
-#include <vector>
 #include <iostream>
+#include "PointCollection.h"
+#include "LineCollection.h"
 
-// Data structures to store points and lines
-std::vector<vec3> points;
-std::vector<std::pair<vec3, vec3> > lines;
 
-char mode = 'p'; // Current mode: 'p' = point, 'l' = line, 'm' = move, 'i' = intersection
 
 class MyApp : public glApp {
+
+private:
+    char mode = 'p'; // 'p' = point, 'l' = line, 'm' = move, 'i' = intersection
+    PointCollection points;
+    LineCollection lines;
+
+    vec3 firstPoint;
+    bool firstSelected = false;
+    Line *selectedLine = nullptr;
+
+    vec3 firstIntersectionPoint;
+    bool firstLineSelected = false;
+
 public:
-    MyApp() : glApp(4, 5, 900, 600, "Grafika") {
-    }
+    MyApp() : glApp(4, 5, 600, 600, "Grafika")
+    { }
+
 
     void onInitialization() override {
-        // Nothing specific to initialize yet
+        glEnable(GL_POINT_SMOOTH);
     }
+
 
     void onDisplay() override {
-        glClearColor(0.5f, 0.5f, 0.5f, 1); // Grey background
+        glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        // Draw points (red)
-        Geometry<vec3> pointGeom;
-        pointGeom.Vtx() = points;
-        pointGeom.updateGPU();
-        pointGeom.Draw(new GPUProgram(), GL_POINTS, vec3(1, 0, 0));
-
-        // Draw lines (cyan)
-        Geometry<vec3> lineGeom;
-        for (const auto &line: lines) {
-            lineGeom.Vtx().push_back(line.first);
-            lineGeom.Vtx().push_back(line.second);
-        }
-        lineGeom.updateGPU();
-        lineGeom.Draw(new GPUProgram(), GL_LINES, vec3(0, 1, 1));
+        lines.draw();
+        points.draw();
     }
 
-    void onKeyboard(int key) override {
+
+    void onKeyboard(const int key) override {
         if (key == 'p' || key == 'l' || key == 'm' || key == 'i') {
             mode = key;
+            firstSelected = false;
+            firstLineSelected = false;
+            selectedLine = nullptr;
+            std::cout << "Mode: " << mode << "\n";
         }
     }
 
-    void onMousePressed(MouseButton button, int px, int py) override {
-        vec3 normalizedPoint = vec3(2.0f * px / 600.0f - 1.0f, 1.0f - 2.0f * py / 600.0f, 1);
+
+    void onMousePressed(MouseButton button, const int px, const int py) override {
+        vec3 p = vec3(2.0f * px / 600.0f - 1.0f, 1.0f - 2.0f * py / 600.0f, 1);
 
         if (mode == 'p') {
-            // Add a new red point
-            points.push_back(normalizedPoint);
-            std::cout << "Added point: (" << normalizedPoint.x << ", " << normalizedPoint.y << ")\n";
+            points.addPoint(p);
         } else if (mode == 'l') {
-            static vec3 firstPoint;
-            static bool firstSelected = false;
-
             if (!firstSelected) {
-                firstPoint = normalizedPoint;
+                firstPoint = points.findNearestPoint(p);
                 firstSelected = true;
             } else {
-                lines.emplace_back(firstPoint, normalizedPoint);
-                std::cout << "Added line from (" << firstPoint.x << ", " << firstPoint.y << ") "
-                        << "to (" << normalizedPoint.x << ", " << normalizedPoint.y << ")\n";
+                vec3 secondPoint = points.findNearestPoint(p);
+                lines.addLine(firstPoint, secondPoint);
                 firstSelected = false;
             }
+        } else if (mode == 'm') {
+            if (!selectedLine) {
+                selectedLine = lines.findNearestLine(p);
+            }
+        } else if (mode == 'i') {
+            if (!firstLineSelected) {
+                selectedLine = lines.findNearestLine(p);
+                if (selectedLine) {
+                    firstIntersectionPoint = p; // Store for reference
+                    firstLineSelected = true;
+                }
+            } else {
+                Line *secondLine = lines.findNearestLine(p);
+                if (secondLine && secondLine != selectedLine) {
+                    vec3 intersection = selectedLine->computeIntersection(*secondLine);
+                    if (intersection != vec3(0, 0, 0)) {
+                        points.addPoint(intersection);
+                    }
+                }
+                firstLineSelected = false;
+                selectedLine = nullptr;
+            }
         }
-
         refreshScreen();
     }
+
+
+    void onMouseMotion(const int px, const int py) override {
+        if (mode == 'm' && selectedLine) {
+            vec3 p = vec3(2.0f * px / 600.0f - 1.0f, 1.0f - 2.0f * py / 600.0f, 1);
+            selectedLine->translate(p);
+            refreshScreen();
+        }
+    }
+
+
+    void onMouseReleased(MouseButton button, int px, int py) override {
+        if (mode == 'm')
+            selectedLine = nullptr;
+    }
+
+
 } app;

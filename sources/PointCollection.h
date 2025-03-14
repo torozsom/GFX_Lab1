@@ -2,7 +2,7 @@
 #define POINTCOLLECTION_H
 
 #include <vector>
-#include "framework.h"
+#include "Line.h"
 
 class PointCollection {
 private:

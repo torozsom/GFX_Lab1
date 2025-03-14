@@ -11,9 +11,11 @@ private:
 public:
     void addLine(vec3 p1, vec3 p2);
 
-    Line *findNearestLine(vec3 p);
+    Line* findNearestLine(vec3 p);
 
-    void draw();
+    void draw() const;
+
+    std::vector<Line>& getLines() { return lines; }
 };
 
 #endif

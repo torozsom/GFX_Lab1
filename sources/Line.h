@@ -15,9 +15,11 @@ public:
 
     vec3 computeIntersection(const Line &other) const;
 
-    void translate(vec3 p);
+    void translate(vec3 newPoint);
 
-    void draw();
+    void draw() const;
+
+    void printEquations() const;
 };
 
 #endif
