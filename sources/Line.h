@@ -24,7 +24,7 @@ public:
 
     void translate(vec3 newPoint);
 
-    void draw() const;
+    void draw(GPUProgram* prog) const;
 
     void printEquations() const;
 };

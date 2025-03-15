@@ -3,18 +3,49 @@
 #include "LineCollection.h"
 
 
+
+/**
+ * @class MyApp
+ * @brief A simple OpenGL application for drawing points and lines.
+ *
+ * This class extends the glApp class to create a graphical application that allows
+ * users to add points, draw lines, move lines, and find intersections between lines.
+ * The application supports different modes of operation, which can be changed using
+ * keyboard inputs.
+ */
 class MyApp : public glApp {
 private:
     char mode = 'p'; // 'p' = point, 'l' = line, 'm' = move, 'i' = intersection
     PointCollection points;
     LineCollection lines;
+    GPUProgram* shaderProg = nullptr;
 
     vec3 firstPoint;
     bool firstSelected = false;
-    Line *selectedLine = nullptr;
+    Line* selectedLine = nullptr;
 
     vec3 firstIntersectionPoint;
     bool firstLineSelected = false;
+
+    const char* vertexShaderSource = R"(
+        #version 330 core
+        layout(location = 0) in vec3 aPos;
+        uniform vec3 color;
+        out vec3 fragColor;
+        void main() {
+            gl_Position = vec4(aPos, 1.0);
+            fragColor = color;
+        }
+    )";
+
+    const char* fragmentShaderSource = R"(
+        #version 330 core
+        in vec3 fragColor;
+        out vec4 FragColor;
+        void main() {
+            FragColor = vec4(fragColor, 1.0);
+        }
+    )";
 
 public:
     MyApp() : glApp(4, 5, 600, 600, "Grafika")
@@ -31,6 +62,7 @@ public:
      */
     void onInitialization() override {
         glEnable(GL_POINT_SMOOTH);
+        shaderProg = new GPUProgram(vertexShaderSource, fragmentShaderSource);
     }
 
 
@@ -45,9 +77,9 @@ public:
     void onDisplay() override {
         glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-
-        lines.draw();
-        points.draw();
+        shaderProg->Use();
+        lines.draw(shaderProg);
+        points.draw(shaderProg);
     }
 
 
@@ -64,7 +96,7 @@ public:
      */
     void onKeyboard(const int key) override {
         if (key == 'p' || key == 'l' || key == 'm' || key == 'i') {
-            mode = key;
+            mode = static_cast<char>(key);
             firstSelected = false;
             firstLineSelected = false;
             selectedLine = nullptr;
@@ -130,8 +162,8 @@ public:
      * @return A 3D vector (vec3) representing the normalized point.
      */
     vec3 calculateNormalizedPoint(const int pX, const int pY) {
-        float normalizedX = 2.0f * pX / 600.0f - 1.0f;
-        float normalizedY = 1.0f - 2.0f * pY / 600.0f;
+        float normalizedX = 2.0f * static_cast<float>(pX) / 600.0f - 1.0f;
+        float normalizedY = 1.0f - 2.0f * static_cast<float>(pY) / 600.0f;
         return vec3(normalizedX, normalizedY, 1.0f);
     }
 
@@ -180,8 +212,14 @@ public:
      * @param point The 3D point used to determine the nearest line in the context of move mode.
      */
     void handleMoveMode(const vec3& point) {
-        if (!selectedLine)
+        if (!selectedLine) {
             selectedLine = lines.findNearestLine(point);
+            if (selectedLine) {
+                std::cout << "Line selected for moving\n";
+            } else {
+                std::cout << "No line found near point\n";
+            }
+        }
     }
 
 
@@ -195,7 +233,7 @@ public:
      *
      * @param point The 3D point used to determine the nearest line during the selection phase.
      */
-    void handleIntersectionMode(const vec3 &point) {
+    void handleIntersectionMode(const vec3& point) {
         if (!firstLineSelected) {
             selectedLine = lines.findNearestLine(point);
             if (selectedLine) {
@@ -203,7 +241,7 @@ public:
                 firstLineSelected = true;
             }
         } else {
-            Line *secondLine = lines.findNearestLine(point);
+            Line* secondLine = lines.findNearestLine(point);
             if (secondLine && secondLine != selectedLine) {
                 vec3 intersection = selectedLine->computeIntersection(*secondLine);
                 if (intersection != vec3(0, 0, 0)) {
@@ -230,7 +268,8 @@ public:
      */
     void onMouseMotion(const int px, const int py) override {
         if (mode == 'm' && selectedLine) {
-            vec3 p = vec3(2.0f * px / 600.0f - 1.0f, 1.0f - 2.0f * py / 600.0f, 1);
+            vec3 p = vec3(2.0f * static_cast<float>(px) / 600.0f - 1.0f,
+                1.0f - 2.0f * static_cast<float>(py) / 600.0f, 1);
             selectedLine->translate(p);
             refreshScreen();
         }
@@ -252,5 +291,8 @@ public:
         if (mode == 'm')
             selectedLine = nullptr;
     }
+
+
+    ~MyApp() { delete shaderProg; }
 
 } app;

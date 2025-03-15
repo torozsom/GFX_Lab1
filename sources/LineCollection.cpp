@@ -30,7 +30,7 @@ Line* LineCollection::findNearestLine(const vec3 p) {
 /**
  * Draws all lines in the collection.
  */
-void LineCollection::draw() const {
+void LineCollection::draw(GPUProgram* prog) const {
     for (const auto& line: lines)
-        line.draw();
+        line.draw(prog);
 }

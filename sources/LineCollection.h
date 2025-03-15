@@ -23,7 +23,7 @@ public:
 
     Line* findNearestLine(vec3 p);
 
-    void draw() const;
+    void draw(GPUProgram* prog) const;
 
     std::vector<Line>& getLines() { return lines; }
 };

@@ -23,7 +23,7 @@ public:
 
     vec3 findNearestPoint(vec3 p);
 
-    void draw() const;
+    void draw(GPUProgram* prog) const;
 };
 
 #endif

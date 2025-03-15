@@ -49,10 +49,10 @@ vec3 PointCollection::findNearestPoint(const vec3 p) {
  * in the collection, and then draws it using a GPU program. The points are
  * rendered as red dots on the screen.
  */
-void PointCollection::draw() const {
+void PointCollection::draw(GPUProgram* prog) const {
     Geometry<vec3> geom;
     geom.Vtx() = points;
     geom.updateGPU();
     glPointSize(10.0f);
-    geom.Draw(new GPUProgram(), GL_POINTS, vec3(1, 0, 0)); // Red
+    geom.Draw(prog, GL_POINTS, vec3(1, 0, 0)); // Red
 }

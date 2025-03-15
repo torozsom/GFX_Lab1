@@ -79,15 +79,15 @@ vec3 Line::computeIntersection(const Line& other) const {
  * @param newPoint The new point to translate the line to.
  */
 void Line::translate(const vec3 newPoint) {
+    // Update C to shift the line while keeping its direction
     C = A * newPoint.x + B * newPoint.y;
     vec3 direction = p2 - p1;
-    float t1 = (newPoint.x - p1.x) / direction.x;
-
-    if (fabs(direction.x) < 1e-6f)
-        t1 = (newPoint.y - p1.y) / direction.y;
-
-    p1 = newPoint - direction * 2.0f;
-    p2 = newPoint + direction * 2.0f;
+    // Ensure direction is non-zero to avoid division by zero
+    float t = (fabs(direction.x) > 1e-6f) ? (newPoint.x - p1.x) / direction.x : (newPoint.y - p1.y) / direction.y;
+    // Update endpoints to span the viewport
+    p1 = newPoint - direction * 10.0f; // Extend far beyond -1
+    p2 = newPoint + direction * 10.0f; // Extend far beyond 1
+    std::cout << "Translated to: (" << newPoint.x << ", " << newPoint.y << ")\n";
 }
 
 
@@ -98,12 +98,38 @@ void Line::translate(const vec3 newPoint) {
  * the appropriate shader program. The line is drawn with a specified width
  * and color.
  */
-void Line::draw() const {
-    Geometry<vec3> geom;
-    geom.Vtx() = {p1, p2};
-    geom.updateGPU();
-    glLineWidth(3.0f);
-    geom.Draw(new GPUProgram(), GL_LINES, vec3(0, 1, 1));
+void Line::draw(GPUProgram* prog) const {
+    vec3 direction = p2 - p1;
+    std::vector<vec3> endpoints;
+
+    // Parametric form: p(t) = p1 + t * (p2 - p1)
+    float t_xmin = (-1.0f - p1.x) / direction.x;
+    float t_xmax = (1.0f - p1.x) / direction.x;
+    float t_ymin = (-1.0f - p1.y) / direction.y;
+    float t_ymax = (1.0f - p1.y) / direction.y;
+
+    if (direction.x != 0) {
+        vec3 x_min = p1 + t_xmin * direction;
+        vec3 x_max = p1 + t_xmax * direction;
+        if (x_min.y >= -1.0f && x_min.y <= 1.0f) endpoints.push_back(x_min);
+        if (x_max.y >= -1.0f && x_max.y <= 1.0f) endpoints.push_back(x_max);
+    }
+    if (direction.y != 0) {
+        vec3 y_min = p1 + t_ymin * direction;
+        vec3 y_max = p1 + t_ymax * direction;
+        if (y_min.x >= -1.0f && y_min.x <= 1.0f) endpoints.push_back(y_min);
+        if (y_max.x >= -1.0f && y_max.x <= 1.0f) endpoints.push_back(y_max);
+    }
+
+    if (endpoints.size() >= 2) {
+        Geometry<vec3> geom;
+        geom.Vtx() = {endpoints[0], endpoints[1]};
+        geom.updateGPU();
+        glLineWidth(3.0f);
+        geom.Draw(prog, GL_LINES, vec3(0, 1, 1));
+    } else {
+        std::cout << "Line not visible: insufficient endpoints\n";
+    }
 }
 
 
@@ -114,7 +140,8 @@ void Line::draw() const {
  * representation of the line to the console.
  */
 void Line::printEquations() const {
-    std::cout << "Implicit: " << A << "x + " << B << "y = " << C << "\n";
-    std::cout << "Parametric: (x, y) = (" << p1.x << ", " << p1.y << ") + t * ("
-            << (p2.x - p1.x) << ", " << (p2.y - p1.y) << ")\n";
+    std::cout   << "Line added \n"
+                << "\t Implicit: " << A << " x + " << B << " y = " << C << "\n"
+                << "\t Parametric: r(t) = (" << p1.x << ", " << p1.y << ") + "
+                << "(" << p2.x - p1.x << ", " << p2.y - p1.y << ")t \n";
 }
