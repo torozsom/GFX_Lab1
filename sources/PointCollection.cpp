@@ -31,7 +31,7 @@ void PointCollection::addPoint(const vec3 p) {
 vec3 PointCollection::findNearestPoint(const vec3 p) {
     float minDist = 1.0f;
     vec3 closest = vec3(0, 0, 1);
-    for (const auto &pt: points) {
+    for (const auto& pt: points) {
         float dist = length(pt - p);
         if (dist < minDist) {
             minDist = dist;

@@ -23,7 +23,6 @@ private:
     vec3 firstPoint;
     bool firstSelected = false;
     Line* selectedLine = nullptr;
-
     vec3 firstIntersectionPoint;
     bool firstLineSelected = false;
 
@@ -214,11 +213,6 @@ public:
     void handleMoveMode(const vec3& point) {
         if (!selectedLine) {
             selectedLine = lines.findNearestLine(point);
-            if (selectedLine) {
-                std::cout << "Line selected for moving\n";
-            } else {
-                std::cout << "No line found near point\n";
-            }
         }
     }
 

@@ -79,15 +79,11 @@ vec3 Line::computeIntersection(const Line& other) const {
  * @param newPoint The new point to translate the line to.
  */
 void Line::translate(const vec3 newPoint) {
-    // Update C to shift the line while keeping its direction
     C = A * newPoint.x + B * newPoint.y;
     vec3 direction = p2 - p1;
-    // Ensure direction is non-zero to avoid division by zero
     float t = (fabs(direction.x) > 1e-6f) ? (newPoint.x - p1.x) / direction.x : (newPoint.y - p1.y) / direction.y;
-    // Update endpoints to span the viewport
-    p1 = newPoint - direction * 10.0f; // Extend far beyond -1
-    p2 = newPoint + direction * 10.0f; // Extend far beyond 1
-    std::cout << "Translated to: (" << newPoint.x << ", " << newPoint.y << ")\n";
+    p1 = newPoint - direction * 10.0f;
+    p2 = newPoint + direction * 10.0f;
 }
 
 
@@ -102,7 +98,6 @@ void Line::draw(GPUProgram* prog) const {
     vec3 direction = p2 - p1;
     std::vector<vec3> endpoints;
 
-    // Parametric form: p(t) = p1 + t * (p2 - p1)
     float t_xmin = (-1.0f - p1.x) / direction.x;
     float t_xmax = (1.0f - p1.x) / direction.x;
     float t_ymin = (-1.0f - p1.y) / direction.y;
@@ -114,6 +109,7 @@ void Line::draw(GPUProgram* prog) const {
         if (x_min.y >= -1.0f && x_min.y <= 1.0f) endpoints.push_back(x_min);
         if (x_max.y >= -1.0f && x_max.y <= 1.0f) endpoints.push_back(x_max);
     }
+
     if (direction.y != 0) {
         vec3 y_min = p1 + t_ymin * direction;
         vec3 y_max = p1 + t_ymax * direction;
@@ -127,8 +123,6 @@ void Line::draw(GPUProgram* prog) const {
         geom.updateGPU();
         glLineWidth(3.0f);
         geom.Draw(prog, GL_LINES, vec3(0, 1, 1));
-    } else {
-        std::cout << "Line not visible: insufficient endpoints\n";
     }
 }
 
