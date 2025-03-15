@@ -11,7 +11,6 @@
  *
  * The LineCollection class allows users to manage a set of Line objects. It supports adding lines
  * using two points, finding the nearest line to a given point, and rendering all lines.
- * This class is essential for graphical applications where operations on multiple lines are needed.
  */
 class LineCollection {
 

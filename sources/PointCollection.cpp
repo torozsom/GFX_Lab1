@@ -1,5 +1,4 @@
 #include "PointCollection.h"
-#include <iostream>
 
 
 
@@ -14,7 +13,7 @@
  */
 void PointCollection::addPoint(const vec3 p) {
     points.push_back(p);
-    std::cout << "Point added: (" << p.x << ", " << p.y << ")\n";
+    printf("Point added: (%.2f, %.2f)\n", p.x, p.y);
 }
 
 

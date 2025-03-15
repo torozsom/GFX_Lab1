@@ -1,5 +1,4 @@
 #include "Line.h"
-#include <iostream>
 
 
 
@@ -71,12 +70,14 @@ vec3 Line::computeIntersection(const Line& other) const {
 
 
 /**
- * @brief Translates the line to a new point.
+ * @brief Translates the line to pass through a new point.
  *
- * Moves the line to a new point while maintaining its direction and length.
- * The new point is used to recalculate the line's implicit equation coefficients.
+ * This method adjusts the position of the line so that it passes through
+ * the specified point. The implicit equation coefficient (C) of the line
+ * is updated accordingly, and the endpoints of the line (p1 and p2) are
+ * recalculated, maintaining its direction and scaling appropriately.
  *
- * @param newPoint The new point to translate the line to.
+ * @param newPoint The new point through which the line should pass.
  */
 void Line::translate(const vec3 newPoint) {
     C = A * newPoint.x + B * newPoint.y;
@@ -87,11 +88,20 @@ void Line::translate(const vec3 newPoint) {
 
 
 /**
- * @brief Draws the line on the screen.
+ * @brief Renders the line segment within the unit square using a GPU program.
  *
- * Renders the line using OpenGL by creating a geometry object and setting
- * the appropriate shader program. The line is drawn with a specified width
- * and color.
+ * This method calculates the intersection points of the line with the boundaries
+ * of the unit square in normalized device coordinates (NDC: [-1, 1] for both x and y axes).
+ * If the line intersects the square, it renders the visible segment using the specified GPU program.
+ *
+ * @param prog A pointer to the GPUProgram used for rendering the line.
+ *
+ * The method operates as follows:
+ * - Computes the parametric intersection points of the line with the square boundaries.
+ * - Determines valid endpoints that lie within the bounds of the square.
+ * - If at least two valid endpoints are found, they are sent to the GPU for rendering.
+ *
+ * The rendered line segment is drawn with a width of 3 and a cyan color (RGB: (0, 1, 1)).
  */
 void Line::draw(GPUProgram* prog) const {
     vec3 direction = p2 - p1;
@@ -133,8 +143,10 @@ void Line::draw(GPUProgram* prog) const {
  * representation of the line to the console.
  */
 void Line::printEquations() const {
-    std::cout   << "Line added \n"
-                << "\t Implicit: " << A << " x + " << B << " y = " << C << "\n"
-                << "\t Parametric: r(t) = (" << p1.x << ", " << p1.y << ") + "
-                << "(" << p2.x - p1.x << ", " << p2.y - p1.y << ")t \n";
+    printf("Line added \n"
+        "\t Implicit: %.2f x + %.2f y = %.2f \n"
+        "\t Parametric: r(t) = (%.2f, %.2f) + "
+        "(%.2f, %.2f)t \n", A, B, C, p1.x, p1.y, p2.x - p1.x, p2.y - p1.y);
 }
+
+

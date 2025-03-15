@@ -2,6 +2,7 @@
 #define LINE_H
 
 #include "framework.h"
+#include <stdio.h>
 
 
 /**

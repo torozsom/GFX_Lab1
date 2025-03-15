@@ -1,4 +1,3 @@
-#include <iostream>
 #include "PointCollection.h"
 #include "LineCollection.h"
 
@@ -6,7 +5,7 @@
 
 /**
  * @class MyApp
- * @brief A simple OpenGL application for drawing points and lines.
+ * @brief An OpenGL application for drawing points and lines.
  *
  * This class extends the glApp class to create a graphical application that allows
  * users to add points, draw lines, move lines, and find intersections between lines.
@@ -46,18 +45,18 @@ private:
         }
     )";
 
+
 public:
     MyApp() : glApp(4, 5, 600, 600, "Grafika")
     { }
 
 
     /**
-     * Enables OpenGL point smoothing capability during the initialization phase.
+     * @brief Initializes the OpenGL application.
      *
-     * This function overrides the `onInitialization` method from the base class
-     * and ensures that OpenGL's `GL_POINT_SMOOTH` feature is enabled. This feature
-     * is used to render points with smoother, rounder edges, enhancing the visual
-     * quality of the rendered points.
+     * This method is overridden to set up the initial OpenGL state and resources.
+     * It enables point smoothing for better visual rendering of points and initializes
+     * the shader program with predefined vertex and fragment shader source codes.
      */
     void onInitialization() override {
         glEnable(GL_POINT_SMOOTH);
@@ -99,7 +98,7 @@ public:
             firstSelected = false;
             firstLineSelected = false;
             selectedLine = nullptr;
-            std::cout << "Mode: " << mode << "\n";
+            printf("Mode: %c\n", mode);
         }
     }
 
@@ -141,7 +140,7 @@ public:
                 handleIntersectionMode(normalizedPoint);
                 break;
             default:
-                std::cerr << "Unknown mode: " << mode << "\n";
+                printf("Unknown mode: %c\n", mode);
                 break;
         }
 
@@ -249,26 +248,21 @@ public:
 
 
     /**
-     * Updates the position of a selected line while the mouse is in motion and the mode is set to 'm'.
+     * @brief Handles mouse motion events and updates the position of the selected line accordingly.
      *
-     * This function overrides the `onMouseMotion` method from the base class. It operates only when
-     * the application is in "move" mode ('m') and a line is currently selected. The new position
-     * of the mouse is transformed into normalized device coordinates, which are then used to
-     * translate the selected line to the new position. The display is refreshed after the line
-     * is updated.
+     * This method is called when the mouse is moved. If the application mode is set to 'm'
+     * (move mode) and a line is selected, it calculates the new normalized cursor position
+     * based on the provided pixel coordinates and translates the selected line's position.
+     * The screen is refreshed to display the updated line position.
      *
-     * @param px The x-coordinate of the mouse position in pixel space.
-     * @param py The y-coordinate of the mouse position in pixel space.
+     * @param px The x-coordinate of the mouse cursor in pixels.
+     * @param py The y-coordinate of the mouse cursor in pixels.
      */
     void onMouseMotion(const int px, const int py) override {
         if (mode == 'm' && selectedLine) {
-            // Convert pixel coordinates to normalized device coordinates
             vec3 newCursorPos = calculateNormalizedPoint(px, py);
-
-            // Move the line by making it pass through the new cursor position
             selectedLine->translate(newCursorPos);
-
-            refreshScreen(); // Redraw with updated position
+            refreshScreen();
         }
     }
 
