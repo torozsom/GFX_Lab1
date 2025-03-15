@@ -74,7 +74,7 @@ public:
      * objects to render all stored line and point elements, respectively.
      */
     void onDisplay() override {
-        glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+        glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         shaderProg->Use();
         lines.draw(shaderProg);
@@ -262,10 +262,13 @@ public:
      */
     void onMouseMotion(const int px, const int py) override {
         if (mode == 'm' && selectedLine) {
-            vec3 p = vec3(2.0f * static_cast<float>(px) / 600.0f - 1.0f,
-                1.0f - 2.0f * static_cast<float>(py) / 600.0f, 1);
-            selectedLine->translate(p);
-            refreshScreen();
+            // Convert pixel coordinates to normalized device coordinates
+            vec3 newCursorPos = calculateNormalizedPoint(px, py);
+
+            // Move the line by making it pass through the new cursor position
+            selectedLine->translate(newCursorPos);
+
+            refreshScreen(); // Redraw with updated position
         }
     }
 

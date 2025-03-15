@@ -80,10 +80,9 @@ vec3 Line::computeIntersection(const Line& other) const {
  */
 void Line::translate(const vec3 newPoint) {
     C = A * newPoint.x + B * newPoint.y;
-    vec3 direction = p2 - p1;
-    float t = (fabs(direction.x) > 1e-6f) ? (newPoint.x - p1.x) / direction.x : (newPoint.y - p1.y) / direction.y;
-    p1 = newPoint - direction * 10.0f;
-    p2 = newPoint + direction * 10.0f;
+    vec3 direction = normalize(p2 - p1);
+    p1 = newPoint - direction * 2.0f;
+    p2 = newPoint + direction * 2.0f;
 }
 
 
