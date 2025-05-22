@@ -247,11 +247,11 @@ Shaders are GPU programs that control rendering. This project uses two simple on
     - GLM library for vector math.
 
 2. **Build**:
-    - Clone the repo: `git clone <repo-url>`.
+    - Clone the repo: `git clone https://github.com/torozsom/GFX_Lab1.git`.
     - Compile with your C++ environment (e.g., `g++ *.cpp -lglfw -lGL` on Linux).
 
 3. **Run**:
-    - Execute the binary to launch a 600x600 window titled "Grafika".
+    - Execute the binary to launch a 600x600 window.
 
 Explore the code, tweak it, and experiment with graphics concepts!
 
