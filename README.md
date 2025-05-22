@@ -52,20 +52,14 @@ Device Coordinates (NDC)**, a space where the visible area ranges from `(-1, -1)
 
 Lines are central to this project. They’re defined in two ways:
 
-1. **Parametric Form**:  
-   $$
-   \mathbf{r}(t) = \mathbf{p} + t \mathbf{d}
-   $$
+1. **Parametric Form**:  $$\mathbf{r}(t) = \mathbf{p} + t \mathbf{d}$$
     - $\mathbf{p}$: A point on the line (e.g., `p1`).
     - $\mathbf{d}$: Direction vector (e.g., `p2 - p1`).
     - $t$: A parameter that moves along the line.
     - Used for rendering and finding intersections.
 
 
-2. **Implicit Form**:  
-   $$
-   Ax + By = C
-   $$
+2. **Implicit Form**:  $$Ax + By = C$$
     - $A$, $B$, $C$: Constants derived from two points.
     - Used to check if a point is on the line.
 
