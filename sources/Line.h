@@ -4,19 +4,20 @@
 #include "framework.h"
 #include <stdio.h>
 
-
 /**
- * @brief Represents a 2D line defined by two points and its implicit and parametric equations.
+ * @brief Represents a 2D line defined by two points and its implicit and
+ * parametric equations.
  *
- * This class provides functionalities for managing a line in a Descartes coordinate system.
- * The line is uniquely defined by two points, and its implicit equation is represented as Ax + By = C.
+ * This class provides functionalities for managing a line in a Descartes
+ * coordinate system. The line is uniquely defined by two points, and its
+ * implicit equation is represented as Ax + By = C.
  */
 class Line {
-private:
+
     vec3 p1, p2;
     float A, B, C;
 
-public:
+  public:
     Line(vec3 point1, vec3 point2);
 
     bool contains(vec3 p) const;

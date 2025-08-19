@@ -1,7 +1,5 @@
 #include "PointCollection.h"
 
-
-
 /**
  * @brief Adds a point to the collection.
  *
@@ -16,7 +14,6 @@ void PointCollection::addPoint(const vec3 p) {
     printf("Point added: (%.2f, %.2f)\n", p.x, p.y);
 }
 
-
 /**
  * @brief Finds the nearest point in the collection to a given point.
  *
@@ -24,22 +21,21 @@ void PointCollection::addPoint(const vec3 p) {
  * closest to the specified point p. It returns the closest point as a vec3
  * object.
  *
- * @param p The point to which the nearest point is to be found, represented as a vec3 object.
+ * @param p The point to which the nearest point is to be found, represented as
+ * a vec3 object.
  * @return The nearest point in the collection, represented as a vec3 object.
  */
-vec3 PointCollection::findNearestPoint(const vec3 p) {
+vec3 PointCollection::findNearestPoint(const vec3 p) const {
     float minDist = 1.0f;
-    vec3 closest = vec3(0, 0, 1);
-    for (const auto& pt: points) {
-        float dist = length(pt - p);
-        if (dist < minDist) {
+    auto closest = vec3(0, 0, 1);
+    for (const auto& pt : points) {
+        if (const float dist = length(pt - p); dist < minDist) {
             minDist = dist;
             closest = pt;
         }
     }
     return closest;
 }
-
 
 /**
  * @brief Draws the points in the collection.
