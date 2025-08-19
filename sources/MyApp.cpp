@@ -51,6 +51,7 @@ class MyApp final : public glApp {
   public:
     MyApp() : glApp(4, 5, 600, 600, "Grafika") {}
 
+
     /**
      * @brief Initializes the OpenGL application.
      *
@@ -63,6 +64,7 @@ class MyApp final : public glApp {
         glEnable(GL_POINT_SMOOTH);
         shaderProg = new GPUProgram(vertexShaderSource, fragmentShaderSource);
     }
+
 
     /**
      * Renders the current frame by clearing the framebuffer and drawing
@@ -77,10 +79,12 @@ class MyApp final : public glApp {
     void onDisplay() override {
         glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
+
         shaderProg->Use();
         lines.draw(shaderProg);
         points.draw(shaderProg);
     }
+
 
     /**
      * Handles keyboard input to modify application mode and reset selection
@@ -103,6 +107,7 @@ class MyApp final : public glApp {
             printf("Mode: %c\n", mode);
         }
     }
+
 
     /**
      * Handles mouse press events to add points, create lines, move lines, or
@@ -131,25 +136,26 @@ class MyApp final : public glApp {
         const vec3 normalizedPoint = calculateNormalizedPoint(pX, pY);
 
         switch (mode) {
-        case 'p':
-            handlePointMode(normalizedPoint);
-            break;
-        case 'l':
-            handleLineMode(normalizedPoint);
-            break;
-        case 'm':
-            handleMoveMode(normalizedPoint);
-            break;
-        case 'i':
-            handleIntersectionMode(normalizedPoint);
-            break;
-        default:
-            printf("Unknown mode: %c\n", mode);
-            break;
+            case 'p':
+                handlePointMode(normalizedPoint);
+                break;
+            case 'l':
+                handleLineMode(normalizedPoint);
+                break;
+            case 'm':
+                handleMoveMode(normalizedPoint);
+                break;
+            case 'i':
+                handleIntersectionMode(normalizedPoint);
+                break;
+            default:
+                printf("Unknown mode: %c\n", mode);
+                break;
         }
 
         refreshScreen();
     }
+
 
     /**
      * Calculates a normalized 3D point based on pixel coordinates.
@@ -162,11 +168,12 @@ class MyApp final : public glApp {
      * @param pY The Y-coordinate in pixel space.
      * @return A 3D vector (vec3) representing the normalized point.
      */
-    vec3 calculateNormalizedPoint(const int pX, const int pY) {
+    static vec3 calculateNormalizedPoint(const int pX, const int pY) {
         const float normalizedX = 2.0f * static_cast<float>(pX) / 600.0f - 1.0f;
         const float normalizedY = 1.0f - 2.0f * static_cast<float>(pY) / 600.0f;
-        return vec3(normalizedX, normalizedY, 1.0f);
+        return {normalizedX, normalizedY, 1.0f};
     }
+
 
     /**
      * Handles and adds a point to the collection in point mode.
@@ -179,6 +186,7 @@ class MyApp final : public glApp {
      * added.
      */
     void handlePointMode(const vec3& point) { points.addPoint(point); }
+
 
     /**
      * Handles the line creation process in a two-step selection mode.
@@ -203,6 +211,7 @@ class MyApp final : public glApp {
         }
     }
 
+
     /**
      * Handles move mode by selecting the nearest line to a given point.
      *
@@ -217,6 +226,7 @@ class MyApp final : public glApp {
         if (!selectedLine)
             selectedLine = lines.findNearestLine(point);
     }
+
 
     /**
      * Handles the intersection selection mode and computes intersection points
@@ -251,6 +261,7 @@ class MyApp final : public glApp {
         }
     }
 
+
     /**
      * @brief Handles mouse motion events and updates the position of the
      * selected line accordingly.
@@ -272,6 +283,7 @@ class MyApp final : public glApp {
         }
     }
 
+
     /**
      * Releases the selected line when the mouse button is released in "move"
      * mode.
@@ -290,6 +302,7 @@ class MyApp final : public glApp {
         if (mode == 'm')
             selectedLine = nullptr;
     }
+
 
     ~MyApp() override { delete shaderProg; }
 

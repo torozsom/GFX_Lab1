@@ -1,8 +1,10 @@
 #ifndef LINE_H
 #define LINE_H
 
+
 #include "framework.h"
 #include <stdio.h>
+
 
 /**
  * @brief Represents a 2D line defined by two points and its implicit and
@@ -20,14 +22,11 @@ class Line {
   public:
     Line(vec3 point1, vec3 point2);
 
-    bool contains(vec3 p) const;
-
-    vec3 computeIntersection(const Line& other) const;
+    [[nodiscard]] bool contains(vec3 p) const;
+    [[nodiscard]] vec3 computeIntersection(const Line& other) const;
 
     void translate(vec3 newPoint);
-
     void draw(GPUProgram* prog) const;
-
     void printEquations() const;
 };
 

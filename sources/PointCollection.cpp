@@ -1,4 +1,7 @@
+
+
 #include "PointCollection.h"
+
 
 /**
  * @brief Adds a point to the collection.
@@ -13,6 +16,7 @@ void PointCollection::addPoint(const vec3 p) {
     points.push_back(p);
     printf("Point added: (%.2f, %.2f)\n", p.x, p.y);
 }
+
 
 /**
  * @brief Finds the nearest point in the collection to a given point.
@@ -37,6 +41,7 @@ vec3 PointCollection::findNearestPoint(const vec3 p) const {
     return closest;
 }
 
+
 /**
  * @brief Draws the points in the collection.
  *
@@ -47,6 +52,7 @@ vec3 PointCollection::findNearestPoint(const vec3 p) const {
 void PointCollection::draw(GPUProgram* prog) const {
     if (points.empty())
         return;
+
     Geometry<vec3> geom;
     geom.Vtx() = points;
     geom.updateGPU();

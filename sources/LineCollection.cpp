@@ -1,4 +1,7 @@
+
+
 #include "LineCollection.h"
+
 
 /**
  * Adds a new line to the collection using two provided points.
@@ -7,8 +10,9 @@
  * @param p2 The ending point of the line.
  */
 void LineCollection::addLine(const vec3 p1, const vec3 p2) {
-    lines.push_back(Line(p1, p2));
+    lines.emplace_back(p1, p2);
 }
+
 
 /**
  * Finds the nearest line to the provided point.
@@ -23,6 +27,7 @@ Line* LineCollection::findNearestLine(const vec3 p) {
 
     return nullptr;
 }
+
 
 /**
  * Draws all lines in the collection.

@@ -86,7 +86,7 @@ class GPUProgram {
     }
 
 #ifdef FILE_OPERATIONS
-    std::string file2string(const fs::path& _fileName) {
+    static std::string file2string(const fs::path& _fileName) {
         std::string shaderCodeOut = "";
         std::ifstream shaderStream(_fileName);
         if (!shaderStream.is_open()) {
@@ -103,7 +103,7 @@ class GPUProgram {
     }
 #endif
 
-    std::string shaderType2string(GLenum shadeType) {
+    static std::string shaderType2string(GLenum shadeType) {
         switch (shadeType) {
         case GL_VERTEX_SHADER:
             return "Vertex";
@@ -442,7 +442,7 @@ class glApp {
           unsigned int winWidth,
           unsigned int winHeight, // Alkalmaz�i ablak felbont�sa
           const char* caption);   // Megfog�cs�k sz�vege
-    void refreshScreen();         // Ablak �rv�nytelen�t�se
+    static void refreshScreen();  // Ablak �rv�nytelen�t�se
     // Esem�nykezel�k
     virtual void onInitialization() {}    // Inicializ�ci�
     virtual void onDisplay() {}           // Ablak �rv�nytelen

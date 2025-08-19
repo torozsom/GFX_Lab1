@@ -1,8 +1,10 @@
 #ifndef LINECOLLECTION_H
 #define LINECOLLECTION_H
 
+
 #include "Line.h"
 #include <vector>
+
 
 /**
  * @class LineCollection
@@ -19,9 +21,7 @@ class LineCollection {
 
   public:
     void addLine(vec3 p1, vec3 p2);
-
     Line* findNearestLine(vec3 p);
-
     void draw(GPUProgram* prog) const;
 
     std::vector<Line>& getLines() { return lines; }

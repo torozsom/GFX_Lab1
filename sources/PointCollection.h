@@ -1,8 +1,10 @@
 #ifndef POINTCOLLECTION_H
 #define POINTCOLLECTION_H
 
+
 #include "Line.h"
 #include <vector>
+
 
 /**
  * @class PointCollection
@@ -20,9 +22,7 @@ class PointCollection {
 
   public:
     void addPoint(vec3 p);
-
-    vec3 findNearestPoint(vec3 p) const;
-
+    [[nodiscard]] vec3 findNearestPoint(vec3 p) const;
     void draw(GPUProgram* prog) const;
 };
 
