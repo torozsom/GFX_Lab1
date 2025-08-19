@@ -40,7 +40,9 @@ Line::Line(const vec3 point1, const vec3 point2) : p1(point1), p2(point2) {
  * false otherwise.
  */
 bool Line::contains(const vec3 p) const {
-    const float distance = fabs(A * p.x + B * p.y - C) / sqrt(A * A + B * B);
+    const float denom = sqrt(A*A + B*B);
+    if (denom < 1e-8f) return false;
+    const float distance = fabs(A*p.x + B*p.y - C) / denom;
     return distance < 0.01f;
 }
 
@@ -107,35 +109,30 @@ void Line::draw(GPUProgram* prog) const {
     const vec3 direction = p2 - p1;
     std::vector<vec3> endpoints;
 
-    const float t_xmin = (-1.0f - p1.x) / direction.x;
-    const float t_xmax = (1.0f - p1.x) / direction.x;
-    const float t_ymin = (-1.0f - p1.y) / direction.y;
-    const float t_ymax = (1.0f - p1.y) / direction.y;
-
     if (direction.x != 0) {
+        const float t_xmin = (-1.0f - p1.x) / direction.x;
+        const float t_xmax = ( 1.0f - p1.x) / direction.x;
         const vec3 x_min = p1 + t_xmin * direction;
         const vec3 x_max = p1 + t_xmax * direction;
-        if (x_min.y >= -1.0f && x_min.y <= 1.0f)
-            endpoints.push_back(x_min);
-        if (x_max.y >= -1.0f && x_max.y <= 1.0f)
-            endpoints.push_back(x_max);
+        if (x_min.y >= -1.0f && x_min.y <= 1.0f) endpoints.push_back(x_min);
+        if (x_max.y >= -1.0f && x_max.y <= 1.0f) endpoints.push_back(x_max);
     }
 
     if (direction.y != 0) {
+        const float t_ymin = (-1.0f - p1.y) / direction.y;
+        const float t_ymax = ( 1.0f - p1.y) / direction.y;
         const vec3 y_min = p1 + t_ymin * direction;
         const vec3 y_max = p1 + t_ymax * direction;
-        if (y_min.x >= -1.0f && y_min.x <= 1.0f)
-            endpoints.push_back(y_min);
-        if (y_max.x >= -1.0f && y_max.x <= 1.0f)
-            endpoints.push_back(y_max);
+        if (y_min.x >= -1.0f && y_min.x <= 1.0f) endpoints.push_back(y_min);
+        if (y_max.x >= -1.0f && y_max.x <= 1.0f) endpoints.push_back(y_max);
     }
 
     if (endpoints.size() >= 2) {
         Geometry<vec3> geom;
-        geom.Vtx() = {endpoints[0], endpoints[1]};
+        geom.Vtx() = { endpoints[0], endpoints[1] };
         geom.updateGPU();
         glLineWidth(3.0f);
-        geom.Draw(prog, GL_LINES, vec3(0, 1, 1));
+        geom.Draw(prog, GL_LINES, vec3(0,1,1));
     }
 }
 

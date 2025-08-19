@@ -136,6 +136,7 @@ class MyApp final : public glApp {
             break;
         case 'l':
             handleLineMode(normalizedPoint);
+            break;
         case 'm':
             handleMoveMode(normalizedPoint);
             break;

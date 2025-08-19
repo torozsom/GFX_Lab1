@@ -45,6 +45,8 @@ vec3 PointCollection::findNearestPoint(const vec3 p) const {
  * rendered as red dots on the screen.
  */
 void PointCollection::draw(GPUProgram* prog) const {
+    if (points.empty())
+        return;
     Geometry<vec3> geom;
     geom.Vtx() = points;
     geom.updateGPU();
